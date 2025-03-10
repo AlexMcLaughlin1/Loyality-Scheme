@@ -46,7 +46,7 @@ if st.button("Run Simulation"):
     # Generate synthetic customer behavior
 
     purchases_per_customer = np.random.poisson(lam=average_purchases_per_customer, size=num_customers)
-    order_values = np.random.normal(loc=average_order_value, scale=5, size=sum(purchases_per_customer))  # Order values with some variance
+    order_values = np.random.normal(loc=average_order_value, scale=10, size=sum(purchases_per_customer))  # Order values with some variance
     order_values = np.maximum(order_values, 1)  # Ensure no negative order values
     profit_margin = profit_margin / 100
     percentage_claimed = percentage_claimed / 100

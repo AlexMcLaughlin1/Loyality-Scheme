@@ -118,7 +118,9 @@ if st.button("Run Simulation"):
         st.write(f'### Claimed Giveaway: £{round(percentage_claimed * df_customers.Total_Points.sum(), 2)}')
         st.write(f'### Revenue: £{round(df_customers.Revenue.sum(), 2)}')
         st.write(f'### Profit: £{round(df_customers.Revenue.sum() - percentage_claimed * df_customers.Total_Points.sum(), 2)}')
-        st.write(f'### Points reduced profit by: £{round((percentage_claimed * df_customers.Total_Points.sum()), 2)} ({round(100*(percentage_claimed * df_customers.Total_Points.sum()/df_customers.Revenue.sum()), 1)}%) to gain {df_customers.Referral_Points.sum()} referrals (plus some extra retention).')
+        st.write(f'### Giveaways of: £{round((percentage_claimed * df_customers.Total_Points.sum()), 2)} ({round(100*(percentage_claimed * df_customers.Total_Points.sum()/df_customers.Revenue.sum()), 1)}%)')
+        st.write(f'### Number of Referrals: {df_customers.Referral_Points.sum()}')
+        st.write(f'### Cost per Aquisition (referrals only): £{round((percentage_claimed * df_customers.Referral_Points.sum() / df_customers.Referral_Points.sum()), 2)}')
 
     # Distribution Tab
     with tab2:

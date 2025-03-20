@@ -8,28 +8,74 @@ import math
 # Set the title of the app
 st.title("Subtv Loyality and Referral Scheme Simulation")
 
-st.header("Inputs")
-num_customers = st.number_input("Number of Customers", min_value=1, value=1000, step=1)
+# st.header("Inputs")
+st.markdown("---")
+
+st.header("Reach & Conversion")
+# Create two columns
+reach_col1, reach_col2 = st.columns(2)
+
+with reach_col1:
+
+    subtv_audience = st.number_input("Subtv Reach", min_value= 0, value = 1000000, step = 10000)
+    # subtv_audience = 1000000
+    # st.write(f"Subtv Reach: {format(subtv_audience, ",")}")
+
+    subtv_conversion_rate = st.number_input("Subtv Conversion Rate (%)", min_value=0.0, value=3.5, step=0.1) / 100
+    app_users_subtv = round(subtv_audience * subtv_conversion_rate)
+    st.write(f'App Users From Subtv: {format(int(app_users_subtv), ",")}')
+
+with reach_col2:
+
+    rockbox_audience = st.number_input("Rockbox Reach", min_value= 0, value = 1000000, step = 10000)
+    # rockbox_audience = 1000000
+    # st.write(f"Rockbox Reach: {format(rockbox_audience, ",")}")
+
+    rockbox_conversion_rate = st.number_input("Rockbox Conversion Rate (%)", min_value=0.0, value=0.4, step=0.1) / 100
+    app_users_rockbox = round(rockbox_audience * rockbox_conversion_rate)
+    st.write(f'App Users From Rockbox: {format(int(app_users_rockbox), ",")}')
+
+num_users = app_users_rockbox + app_users_subtv
+st.write(f'### Total App Users: {format(int(num_users), ",")}')
+
+st.markdown("---")
+
+user_to_customer_conversion = st.number_input("App User to Perks Customer Conversion Rate (%)", min_value=1, max_value=100, value=30, step=1) / 100
+num_customers = round(num_users * user_to_customer_conversion)
+st.write(f'### Number of Perks Customers: {format(int(num_customers), ",")}')
+# num_customers = st.number_input("Number of Customers", min_value=1, value=1000, step=1)
+
+st.markdown("---")
+
 profit_margin = st.number_input("Average Profit Margin (%)", min_value=0.0, value=2.0, step=0.1)
 points_to_value_ratio = st.number_input('Points to Value Ration', min_value=0.001, value=0.001, step=0.001, format="%.3f")
 
+st.markdown("---")
 
-# Create two columns
+st.header("Customer Behaviours")
+average_purchases_per_customer = st.number_input("Average Purchases per Customer", min_value=1, value=12, step=1)
+average_order_value = st.number_input("Average Order Value (£)", min_value=1, value=25, step=1)
+# percentage_claimed = st.number_input("Percentage of Bonus Claimed", min_value=1, value=50, step=1)
+
+st.markdown("---")
+
+
+
+st.header("Points Accumulation")
 col1, col2 = st.columns(2)
 
-# Add content to the first column
 with col1:
-    st.subheader("Customer Behaviours")
-    average_purchases_per_customer = st.number_input("Average Purchases per Customer", min_value=1, value=3, step=1)
-    average_order_value = st.number_input("Average Order Value (£)", min_value=1, value=30, step=1)
-    percentage_claimed = st.number_input("Percentage of Bonus Claimed", min_value=1, value=50, step=1)
 
     st.subheader("Referrals")
-    points_per_referral = st.number_input("Referral Points", min_value=1, value=1000, step=1)
-    referree = st.checkbox("Bonus for both referrer and referee")
+    points_per_referral = st.number_input("Referral Points", min_value=1, value=1500, step=1)
+    # referree = st.checkbox("Bonus for both referrer and referee")
     
     st.subheader('Purchases')
     point_per_spend = st.number_input("Points Per £ Spend", min_value=1, value=2, step=1)
+
+    st.subheader('Requests')
+    points_per_request = st.number_input('Points per Request', min_value=0, value=1, step=1)
+    points_per_upvote = st.number_input('Points per Upvote', min_value=0, value=10, step=1)
 
 # Add content to the second column
 with col2:
@@ -41,29 +87,27 @@ with col2:
         milestone3 = st.number_input("Milestone Three Orders", min_value=0, value=25, step=1)
 
     with col2_2:
-        milestone1_value = st.number_input("Milestone One Value", min_value=0, value=1000, step=1)
-        milestone2_value = st.number_input("Milestone Two Value", min_value=0, value=2000, step=1)
-        milestone3_value = st.number_input("Milestone Three Value", min_value=0, value=5000, step=1)
+        milestone1_value = st.number_input("Milestone One Value", min_value=0, value=500, step=1)
+        milestone2_value = st.number_input("Milestone Two Value", min_value=0, value=1000, step=1)
+        milestone3_value = st.number_input("Milestone Three Value", min_value=0, value=2500, step=1)
 
-    st.subheader('Requests')
-    points_per_request = st.number_input('Points per Request', min_value=0, value=1, step=1)
-    points_per_upvote = st.number_input('Points per Upvote', min_value=0, value=10, step=1)
+st.markdown("---")
 
-    st.subheader('Spin the Wheel')
-    spin_the_wheel_points = st.number_input('Points Per Sping the Wheel', min_value=0, value=1500, step=1)
-    avg_cost_spw = st.number_input('Average Cost Per Spin the Wheel (£)', min_value=0.0, value=1.00, step=0.01, format="%.2f")
+st.header('Spin the Wheel Mechanism')
+spin_the_wheel_points = st.number_input('Points Per Sping the Wheel', min_value=0, value=2500, step=1)
+avg_cost_spw = st.number_input('Average Cost Per Spin the Wheel (£)', min_value=0.0, value=0.50, step=0.01, format="%.2f")
 
 
 
 # Button to run the simulation
 if st.button("Run Simulation"):
     # Generate synthetic customer behavior
-
-    purchases_per_customer = np.random.poisson(lam=average_purchases_per_customer, size=num_customers)
-    order_values = np.random.normal(loc=average_order_value, scale=5, size=sum(purchases_per_customer))  # Order values with some variance
-    order_values = np.maximum(order_values, 1)  # Ensure no negative order values
+    # purchases_per_customer = np.random.poisson(lam=average_purchases_per_customer, size=num_customers)
+    purchases_per_customer = np.random.negative_binomial(n=average_purchases_per_customer, p=0.5, size=num_customers)
+    order_values = np.random.normal(loc=average_order_value, scale=15, size=sum(purchases_per_customer))  
+    order_values = np.maximum(order_values, 5)  # Min purchase of £5
     profit_margin = profit_margin / 100
-    percentage_claimed = percentage_claimed / 100
+    # percentage_claimed = percentage_claimed / 100
     requests_per_customer = np.random.lognormal(mean=2, sigma=1.2, size=num_customers).astype(int)
     # Introduce a 50% chance of being zero
     mask = np.random.choice([0, 1], size=num_customers, p=[0.5, 0.5])  # 50% chance for zero
@@ -82,6 +126,8 @@ if st.button("Run Simulation"):
 
     # Simulating the customer transactions
     customer_data = []
+
+
 
     for i in range(num_customers):
         num_purchases = purchases_per_customer[i]
@@ -108,29 +154,36 @@ if st.button("Run Simulation"):
         # Referral points
         num_referrals = min(max(referral_flags[i], 0), 5)
         referral_points = num_referrals * points_per_referral
-        if referree:
-            referral_points = 2*referral_points
+        # if referree:
+        #     referral_points = 2*referral_points
 
         num_stw = (purchase_points + milestone_points + referral_points + request_points + upvote_points) / spin_the_wheel_points
-        stw_points = (math.floor(num_stw) * avg_cost_spw) / points_to_value_ratio
+        stw_value = (math.floor(num_stw) * avg_cost_spw)
 
         # Total points
-        total_points = purchase_points + milestone_points + referral_points + request_points + upvote_points + stw_points
+        total_points = purchase_points + milestone_points + referral_points + request_points + upvote_points
+
+        total_points_claimed = math.floor(total_points / 10000) * 10000
+
+        rockbox_referral = np.random.random() < (app_users_rockbox / num_users)
 
         # Store data
-        customer_data.append([i + 1, num_purchases, np.sum(purchase_values), purchase_points, milestone_points, num_referrals, referral_points, num_requests, request_points, num_upvotes, upvote_points, num_stw, stw_points, total_points])
+        customer_data.append([i + 1, num_purchases, rockbox_referral, np.sum(purchase_values), purchase_points, milestone_points, num_referrals, referral_points, num_requests, request_points, num_upvotes, upvote_points, num_stw, stw_value, total_points, total_points_claimed])
+
+
 
     # Convert to DataFrame
     df_customers = pd.DataFrame(customer_data, columns=[
-        "Customer_ID", "Purchases", "Total_Spend", "Purchase_Points",
-        "Milestone_Points", "Number_Referrals", "Referral_Points", "Number_Requests", "Request_Points", "Number_Upvotes", "Upvote_Points", "Number_Spin_The_Wheels", "Spin_The_Wheel_Points", "Total_Points"
+        "Customer_ID", "Purchases", 'Rockbox_Referral', "Total_Spend", "Purchase_Points",
+        "Milestone_Points", "Number_Referrals", "Referral_Points", "Number_Requests", "Request_Points", "Number_Upvotes", "Upvote_Points", "Number_Spin_The_Wheels", "Spin_The_Wheel_Value", "Total_Points", "Total_Points_Claimed"
     ])
 
 
-    df_customers["Total_Points_Claimed_Value"] = df_customers.Total_Points * points_to_value_ratio
+    df_customers["Total_Points_Claimed_Value"] = df_customers.Total_Points_Claimed * points_to_value_ratio
     # Calculate profit per customer
     df_customers["Revenue"] = df_customers["Total_Spend"] * profit_margin 
-    df_customers["Individual_Profit"] = df_customers["Revenue"] - df_customers["Total_Points_Claimed_Value"]
+    df_customers["Rockbox Cut"] = np.where(df_customers["Rockbox_Referral"], df_customers["Revenue"] * 0.25, 0)
+    df_customers["Individual_Profit"] = df_customers["Revenue"] - df_customers["Total_Points_Claimed_Value"] - df_customers["Rockbox Cut"] - df_customers["Spin_The_Wheel_Value"]
 
     # Round values
     df_customers = df_customers.round(2)
@@ -141,23 +194,28 @@ if st.button("Run Simulation"):
     with tab1:
 
     # Display the table
-        st.write("### Customer Data & Profit Summary")
+        st.write("### Individual Customer Data")
         st.dataframe(df_customers)
 
         # Show summary statistics
         st.write("### Summary Statistics")
         st.write(df_customers.describe())
 
-        # Show total profit
+        # Show total profit      format(round(df_customers.Total_Points.sum()), ",")
         # total_profit = df_customers["Individual_Profit"].sum()
         # st.write(f"### **Total Estimated Profit: ${total_profit:,.2f}**")
-        st.write(f'### Total Giveaway: {round(df_customers.Total_Points.sum())} Points or £{round(df_customers.Total_Points_Claimed_Value.sum(), 2)}')
-        st.write(f'### Claimed Giveaway: £{round(percentage_claimed * df_customers.Total_Points_Claimed_Value.sum(), 2)}')
-        st.write(f'### Revenue: £{round(df_customers.Revenue.sum(), 2)}')
-        st.write(f'### Profit: £{round(df_customers.Revenue.sum() - percentage_claimed * df_customers.Total_Points_Claimed_Value.sum(), 2)}')
-        st.write(f'### Giveaways of: £{round((percentage_claimed * df_customers.Total_Points_Claimed_Value.sum()), 2)} ({round(100*(percentage_claimed * df_customers.Total_Points_Claimed_Value.sum()/df_customers.Revenue.sum()), 1)}%)')
-        st.write(f'### Number of Referrals: {df_customers.Number_Referrals.sum()}')
-        st.write(f'### Cost per Aquisation (referrals only): £{round((percentage_claimed * df_customers.Referral_Points.sum() * points_to_value_ratio)/df_customers.Number_Referrals.sum(), 2)}')
+        st.write('## Simulation Summary')
+        st.write(f'### Revenue: £{format(round(df_customers.Revenue.sum()), ",")}')
+        st.write(f'### Profit: £{format(round(df_customers.Individual_Profit.sum()), ",")}')
+        st.markdown("---")
+        st.write(f"""#### Total Giveaway From Points: {format(round(df_customers.Total_Points.sum()), ",")} Points or £{format(round(df_customers.Total_Points.sum() * points_to_value_ratio), ",")} of which £{format(round(df_customers.Total_Points_Claimed_Value.sum()), ",")} was claimed as giftcards.""")
+        st.write(f"#### Total Giveaway From Spin the Wheel: £{format(round(df_customers.Spin_The_Wheel_Value.sum()), ",")}")
+        st.write(f"""#### Number of Referrals: {format(df_customers.Number_Referrals.sum(), ",")}.""")
+        st.write(f"#### Cost per Aquisition from Referral/Loyality Scheme: £{format(round((df_customers.Total_Points_Claimed_Value.sum() + df_customers.Spin_The_Wheel_Value.sum())/df_customers.Number_Referrals.sum(), 2), ",")}")
+        st.markdown("---")
+        st.write(f'#### Rockbox Cut: £{format(round(df_customers['Rockbox Cut'].sum()), ",")}.')
+        st.write(f"""#### Number of Referrals: {format(df_customers.Rockbox_Referral.sum(), ",")}""")
+        st.write(f"#### Cost per Aquisition from Rockbox: £{round(df_customers["Rockbox Cut"].sum() / df_customers.Rockbox_Referral.sum(), 2)}")
 
     # Distribution Tab
     with tab2:
@@ -182,7 +240,7 @@ if st.button("Run Simulation"):
         total_Referral_Points = df_customers.Referral_Points.sum()
         total_Request_Points = df_customers.Request_Points.sum()
         total_Upvote_Points = df_customers.Upvote_Points.sum()
-        total_SpinTheWheel_Points = df_customers.Spin_The_Wheel_Points.sum()
+        # total_SpinTheWheel_Value = df_customers.Spin_The_Wheel_Value.sum()
         total_Points_Giveaway = sum([total_Purchase_Points, total_Milestone_Points, total_Referral_Points, total_Request_Points, total_Upvote_Points])
         
         # Create a DataFrame for the points breakdown

@@ -68,6 +68,7 @@ with col1:
 
     st.subheader("Referrals")
     points_per_referral = st.number_input("Referral Points", min_value=1, value=1500, step=1)
+    max_referrals = st.number_input("Maximum Referrals Per User", min_value=0, value=5, step=1)
     # referree = st.checkbox("Bonus for both referrer and referee")
     
     st.subheader('Purchases')
@@ -152,7 +153,7 @@ if st.button("Run Simulation"):
             milestone_points += milestone3_value
 
         # Referral points
-        num_referrals = min(max(referral_flags[i], 0), 5)
+        num_referrals = min(max(referral_flags[i], 0), max_referrals)
         referral_points = num_referrals * points_per_referral
         # if referree:
         #     referral_points = 2*referral_points

@@ -206,7 +206,7 @@ if st.button("Run Simulation"):
         # total_profit = df_customers["Individual_Profit"].sum()
         # st.write(f"### **Total Estimated Profit: ${total_profit:,.2f}**")
         st.write('## Simulation Summary')
-        st.write(f'### Total Giftcard Spend by Users: {format(round(df_customers.Total_Spend.sum()), ",")}')
+        st.write(f'### Total Giftcard Spend by Users: £{format(round(df_customers.Total_Spend.sum()), ",")}')
         st.write(f'### Subtv Revenue: £{format(round(df_customers.Revenue.sum()), ",")}')
         st.write(f'### Subtv Profit: £{format(round(df_customers.Individual_Profit.sum()), ",")}')
         st.markdown("---")

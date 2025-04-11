@@ -4,6 +4,7 @@ import pandas as pd
 import scipy.stats as stats
 import matplotlib.pyplot as plt
 import math
+import random
 
 # Set the title of the app
 st.title("Subtv Loyality and Referral Scheme Simulation")
@@ -62,6 +63,8 @@ st.markdown("---")
 
 
 st.header("Points Accumulation")
+
+assign_users_starting_points = st.checkbox("Assign Users Starting Points")
 col1, col2 = st.columns(2)
 
 with col1:
@@ -161,22 +164,38 @@ if st.button("Run Simulation"):
         num_stw = (purchase_points + milestone_points + referral_points + request_points + upvote_points) / spin_the_wheel_points
         stw_value = (math.floor(num_stw) * avg_cost_spw)
 
+        if assign_users_starting_points:
+
+            if random.random() < 0.4:
+                starting_points = 0
+            else:
+                starting_points = np.random.normal(loc=3000, scale=3000)  # You can adjust the std dev
+            if starting_points < 0:
+                starting_points = 0
+            elif starting_points > 10000:
+                cashed_out_times = math.floor(starting_points/10000)
+                starting_points = starting_points - cashed_out_times * 10000
+        else:
+            starting_points = 0
+
+
+
         # Total points
-        total_points = purchase_points + milestone_points + referral_points + request_points + upvote_points
+        total_points = starting_points + purchase_points + milestone_points + referral_points + request_points + upvote_points
 
         total_points_claimed = math.floor(total_points / 10000) * 10000
 
         rockbox_referral = np.random.random() < (app_users_rockbox / num_users)
 
         # Store data
-        customer_data.append([i + 1, num_purchases, rockbox_referral, np.sum(purchase_values), purchase_points, milestone_points, num_referrals, referral_points, num_requests, request_points, num_upvotes, upvote_points, num_stw, stw_value, total_points, total_points_claimed])
+        customer_data.append([i + 1, num_purchases, rockbox_referral, np.sum(purchase_values), purchase_points, milestone_points, num_referrals, referral_points, num_requests, request_points, num_upvotes, upvote_points, num_stw, stw_value, starting_points, total_points, total_points_claimed])
 
 
 
     # Convert to DataFrame
     df_customers = pd.DataFrame(customer_data, columns=[
         "Customer_ID", "Purchases", 'Rockbox_Referral', "Total_Spend", "Purchase_Points",
-        "Milestone_Points", "Number_Referrals", "Referral_Points", "Number_Requests", "Request_Points", "Number_Upvotes", "Upvote_Points", "Number_Spin_The_Wheels", "Spin_The_Wheel_Value", "Total_Points", "Total_Points_Claimed"
+        "Milestone_Points", "Number_Referrals", "Referral_Points", "Number_Requests", "Request_Points", "Number_Upvotes", "Upvote_Points", "Number_Spin_The_Wheels", "Spin_The_Wheel_Value", "Starting_Points", "Total_Points", "Total_Points_Claimed"
     ])
 
 
